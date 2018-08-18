@@ -33,14 +33,7 @@ export class ResultsPage {
 
             return this.clickFilter(filterType, filterSubtype, filterElement).then(() => {
                 return ResultsPage.numberOfResults().then((numberOfResults) => {
-                    console.log(initialResults+' init;');
-                    console.log(this.totalNumberOfFilteredElements+' total');
-                    console.log(numberOfResults+' number');
-                    if ((this.totalNumberOfFilteredElements == numberOfResults) && (initialResults > this.totalNumberOfFilteredElements)) {
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    return (this.totalNumberOfFilteredElements == numberOfResults) && (initialResults > this.totalNumberOfFilteredElements);
                 })
 
             });
@@ -75,12 +68,8 @@ export class ResultsPage {
             return this.clickFilter(filterType1, filterSubtype1, filterElement1).then(() => {
                 return this.clickFilter(filterType2, filterSubtype2, filterElement2).then(() => {
                     return ResultsPage.numberOfResults().then((numberOfResults) => {
-                        if ((numberOfResults < initialResults)
-                            && (this.totalNumberOfFilteredElements == numberOfResults)) {
-                            return true;
-                        } else {
-                            return false;
-                        }
+                        return (numberOfResults < initialResults)
+                            && (this.totalNumberOfFilteredElements == numberOfResults);
                     });
                 })
             })
