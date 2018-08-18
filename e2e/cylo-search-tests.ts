@@ -29,6 +29,7 @@ function isThereMoreThanZeroResults(searchParameter) {
 
 
 describe('Allexis search field tests', () => {
+    let artistName = 'David Guetta';
     let navigationRoutes: NavigationRoutes = new NavigationRoutes();
 
     beforeAll(function () {
@@ -37,46 +38,75 @@ describe('Allexis search field tests', () => {
 
     beforeEach(() => {
         navigationRoutes.goToLandingPage();
+        ResultsPage.totalNumberOfFilteredElements=0;
+
     });
 
     it('Search for existing artist. Expect more than 0 results', () => {
-        let artistName = 'David Guetta';
         isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeTruthy();
         });
     });
 
-    it('Search for existing artist. Expect more than 0 results.' +
-        'Expect Filtering reduces the number of results, ' +
-        'then Expect random result to verify filter keyword', () => {
-        let artistName = 'David Guetta';
+    it('Filters Verification - Filter: Genres, SubFilter:Pop', () => {
         let filterType = 'Genres';
         let filterSubtype = 'Pop';
         isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeTruthy();
-            ResultsPage.numberOfResults().then((initialResults)=>{
-                let filterElement = ResultsPage.selectByFilter(filterType, filterSubtype);
+           ResultsPage.verifyFilteringFunctionality(filterType, filterSubtype).then((filteringVerified)=>{
+               expect(filteringVerified).toBeTruthy();
+           })
 
-                let numberOfFilteredElementsElement = ResultsPage.numberOfFilteredElements(filterType, filterSubtype);
+        });
+    });
 
-                numberOfFilteredElementsElement.then((filteredNumberOfResults) => {
-                    filterElement.getLocation().then(function (location) {
-                        browser.executeScript('window.scrollTo(0,' + (location.y - 70) + ');').then(function () {
-                            browser.sleep(3000);
-                        }).then(function () {
-                            browser.actions().mouseMove(filterElement).click();
-                            filterElement.click();
-                            browser.sleep(3000).then(() => {
-                                ResultsPage.numberOfResults().then((numberOfResults) => {
-                                    expect(filteredNumberOfResults).toBe(numberOfResults);
-                                    expect(initialResults).toBeGreaterThan(filteredNumberOfResults);
-                                })
-                            })
-                        })
-
-                    })
-                })
+    it('Filters Verification - Filter: Genres, SubFilter:Classical', () => {
+        let filterType = 'Genres';
+        let filterSubtype = 'Classical';
+        isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
+            expect(isThereMultipleResults).toBeTruthy();
+            ResultsPage.verifyFilteringFunctionality(filterType, filterSubtype).then((filteringVerified)=>{
+                expect(filteringVerified).toBeTruthy();
             })
+
+        });
+    });
+
+    it('Filters Verification - Filter: Artists, SubFilter:David Bowie', () => {
+        let filterType = 'Artists';
+        let filterSubtype = 'David Bowie';
+        isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
+            expect(isThereMultipleResults).toBeTruthy();
+            ResultsPage.verifyFilteringFunctionality(filterType, filterSubtype).then((filteringVerified)=>{
+                expect(filteringVerified).toBeTruthy();
+            })
+
+        });
+    });
+
+    it('Filters Verification - Filter: Product types, SubFilter:Album', () => {
+        let filterType = 'Product types';
+        let filterSubtype = 'Album';
+        isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
+            expect(isThereMultipleResults).toBeTruthy();
+            ResultsPage.verifyFilteringFunctionality(filterType, filterSubtype).then((filteringVerified)=>{
+                expect(filteringVerified).toBeTruthy();
+            })
+
+        });
+    });
+
+    it('Multiple Filters Verification - Filter: Product types&Genres, SubFilter:Album&Pop', () => {
+        let filterType1 = 'Genres';
+        let filterType2 = 'Genres';
+        let filterSubtype1 = 'Classical';
+        let filterSubtype2 = 'Pop';
+        isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
+            expect(isThereMultipleResults).toBeTruthy();
+            ResultsPage.multipleFiltersVerification(filterType1,filterType2, filterSubtype1,filterSubtype2).then((filteringVerified)=>{
+                expect(filteringVerified).toBeTruthy();
+            })
+
         });
     });
 
@@ -118,5 +148,4 @@ describe('Allexis search field tests', () => {
     });
 
 
-})
-;
+});
