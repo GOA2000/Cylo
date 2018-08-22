@@ -1,6 +1,7 @@
 import {NavigationRoutes} from "./configuration/navigation-routes";
 import {browser, by, element} from "protractor";
 import {ResultsPage} from "./pages/results-page";
+import {CurrentPage} from "./helpers/current-page";
 
 let loadingTimeout = 5000;
 
@@ -27,6 +28,13 @@ function isThereMoreThanZeroResults(searchParameter) {
     })
 }
 
+function fillSearchFormAndClickSearch(searchParameter) {
+    return element(by.css('.axr-search-box input')).sendKeys(searchParameter).then(() => {
+        return element(by.css('.axr-search-box__icon-search')).click().then(() => {
+            return browser.sleep(loadingTimeout);
+        })
+    })
+}
 
 describe('Allexis search field tests', () => {
     let artistName = 'David Guetta';
@@ -38,7 +46,7 @@ describe('Allexis search field tests', () => {
 
     beforeEach(() => {
         navigationRoutes.goToLandingPage();
-        ResultsPage.totalNumberOfFilteredElements=0;
+        ResultsPage.totalNumberOfFilteredElements = 0;
 
     });
 
@@ -53,9 +61,9 @@ describe('Allexis search field tests', () => {
         let filterSubtype = 'Pop';
         isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeTruthy();
-           ResultsPage.verifyFilteringFunctionality(filterType, filterSubtype).then((filteringVerified)=>{
-               expect(filteringVerified).toBeTruthy();
-           })
+            ResultsPage.verifyFilteringFunctionality(filterType, filterSubtype).then((filteringVerified) => {
+                expect(filteringVerified).toBeTruthy();
+            })
 
         });
     });
@@ -65,7 +73,7 @@ describe('Allexis search field tests', () => {
         let filterSubtype = 'Classical';
         isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeTruthy();
-            ResultsPage.verifyFilteringFunctionality(filterType, filterSubtype).then((filteringVerified)=>{
+            ResultsPage.verifyFilteringFunctionality(filterType, filterSubtype).then((filteringVerified) => {
                 expect(filteringVerified).toBeTruthy();
             })
 
@@ -77,7 +85,7 @@ describe('Allexis search field tests', () => {
         let filterSubtype = 'David Bowie';
         isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeTruthy();
-            ResultsPage.verifyFilteringFunctionality(filterType, filterSubtype).then((filteringVerified)=>{
+            ResultsPage.verifyFilteringFunctionality(filterType, filterSubtype).then((filteringVerified) => {
                 expect(filteringVerified).toBeTruthy();
             })
 
@@ -89,7 +97,7 @@ describe('Allexis search field tests', () => {
         let filterSubtype = 'Album';
         isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeTruthy();
-            ResultsPage.verifyFilteringFunctionality(filterType, filterSubtype).then((filteringVerified)=>{
+            ResultsPage.verifyFilteringFunctionality(filterType, filterSubtype).then((filteringVerified) => {
                 expect(filteringVerified).toBeTruthy();
             })
 
@@ -103,7 +111,7 @@ describe('Allexis search field tests', () => {
         let filterSubtype2 = 'Pop';
         isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeTruthy();
-            ResultsPage.multipleFiltersVerification(filterType1,filterType2, filterSubtype1,filterSubtype2).then((filteringVerified)=>{
+            ResultsPage.multipleFiltersVerification(filterType1, filterType2, filterSubtype1, filterSubtype2).then((filteringVerified) => {
                 expect(filteringVerified).toBeTruthy();
             })
 
@@ -141,9 +149,34 @@ describe('Allexis search field tests', () => {
     });
 
     it('Attempt SQL injection', () => {
-        let song = 'White horse';
+        let song = 'or \'1\'=\'1 ';
         isThereMoreThanZeroResults(song).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeTruthy();
+        });
+    });
+
+    it('Test Short string search,Expect that she search does not execute', () => {
+        let shortString = 'a';
+        CurrentPage.getPageTitle().then((initialPageTitle) => {
+            fillSearchFormAndClickSearch(shortString).then(() => {
+                CurrentPage.getPageTitle().then((afterSearchPageTitle) => {
+                })
+            })
+        })
+
+    });
+
+    it('Test Chinease Han Characters string search. Expect 0 results', () => {
+        let song = '漢字';
+        isThereMoreThanZeroResults(song).then(function (isThereMultipleResults) {
+            expect(isThereMultipleResults).toBeFalsy();
+        });
+    });
+
+    it('Test is there a max number of characters in search string. Expect that the search limits the searched string size', () => {
+        let song = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+        isThereMoreThanZeroResults(song).then(function (isThereMultipleResults) {
+            expect(isThereMultipleResults).toBeFalsy();
         });
     });
 

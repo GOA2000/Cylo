@@ -15,10 +15,6 @@ export class NavigationRoutes {
         return browser.get(NavigationRoutes.HOST_BASE + NavigationRoutes.GET_THE_APPS);
     }
 
-    gotoGetTheAppsString() {
-        return NavigationRoutes.GET_THE_APPS;
-    }
-
     goToSubscriptionsPage() {
         return browser.get(NavigationRoutes.HOST_BASE + NavigationRoutes.SUBSCRIPTIONS);
     }
