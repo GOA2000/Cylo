@@ -2,12 +2,30 @@ import {browser, by, element} from "protractor";
 
 export class ResultsPage {
     static totalNumberOfFilteredElements = 0;
-
+    static loadingTimeout = 5000;
     public static selectByFilter(selectedFilter, subfilter) {
         return element(by.cssContainingText('.ax-aggregator', selectedFilter))
             .element(by.cssContainingText('li', subfilter))
             .element(by.css('input'));
     }
+
+    public static  isThereMoreThanZeroResults(searchParameter) {
+        return element(by.css('.axr-search-box input')).sendKeys(searchParameter).then(() => {
+            return element(by.css('.axr-search-box__icon-search')).click().then(() => {
+                return browser.sleep(this.loadingTimeout).then(() => {
+                    return element(by.css('.results-filter div div span')).getText().then((resultElement) => {
+                        let result: number = parseInt(resultElement.split(' ', 2)[1]);
+                        if (result > 0) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    })
+                })
+            })
+        })
+    }
+
 
     public static numberOfFilteredElements(selectedFilter, subfilter) {
         let numberOfFilteredElements;

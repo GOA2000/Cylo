@@ -1,32 +1,10 @@
 import {NavigationRoutes} from "./configuration/navigation-routes";
 import {browser, by, element} from "protractor";
 import {ResultsPage} from "./pages/results-page";
-import {CurrentPage} from "./helpers/current-page";
 
 let loadingTimeout = 5000;
 
-function rand(min: number, max: number): number {
-    return (Math.random() * (max - min + 1) | 0) + min;
 
-}
-
-
-function isThereMoreThanZeroResults(searchParameter) {
-    return element(by.css('.axr-search-box input')).sendKeys(searchParameter).then(() => {
-        return element(by.css('.axr-search-box__icon-search')).click().then(() => {
-            return browser.sleep(loadingTimeout).then(() => {
-                return element(by.css('.results-filter div div span')).getText().then((resultElement) => {
-                    let result: number = parseInt(resultElement.split(' ', 2)[1]);
-                    if (result > 0) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                })
-            })
-        })
-    })
-}
 
 function fillSearchFormAndClickSearch(searchParameter) {
     return element(by.css('.axr-search-box input')).sendKeys(searchParameter).then(() => {
@@ -50,16 +28,16 @@ describe('Allexis search field tests', () => {
 
     });
 
-    it('Search for existing artist. Expect more than 0 results', () => {
-        isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
+    it('Search for existing artist. Expect more than 0 results - Test Case 1', () => {
+        ResultsPage.isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeTruthy();
         });
     });
 
-    it('Filters Verification - Filter: Genres, SubFilter:Pop', () => {
+    it('Filters Verification - Filter: Genres, SubFilter:Pop - Test Case 2', () => {
         let filterType = 'Genres';
         let filterSubtype = 'Pop';
-        isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
+        ResultsPage.isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeTruthy();
             ResultsPage.verifyFilteringFunctionality(filterType, filterSubtype).then((filteringVerified) => {
                 expect(filteringVerified).toBeTruthy();
@@ -68,10 +46,10 @@ describe('Allexis search field tests', () => {
         });
     });
 
-    it('Filters Verification - Filter: Genres, SubFilter:Classical', () => {
+    it('Filters Verification - Filter: Genres, SubFilter:Classical - Test Case 3', () => {
         let filterType = 'Genres';
         let filterSubtype = 'Classical';
-        isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
+        ResultsPage.isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeTruthy();
             ResultsPage.verifyFilteringFunctionality(filterType, filterSubtype).then((filteringVerified) => {
                 expect(filteringVerified).toBeTruthy();
@@ -80,10 +58,10 @@ describe('Allexis search field tests', () => {
         });
     });
 
-    it('Filters Verification - Filter: Artists, SubFilter:David Bowie', () => {
+    it('Filters Verification - Filter: Artists, SubFilter:David Bowie - Test Case 4', () => {
         let filterType = 'Artists';
         let filterSubtype = 'David Bowie';
-        isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
+        ResultsPage.isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeTruthy();
             ResultsPage.verifyFilteringFunctionality(filterType, filterSubtype).then((filteringVerified) => {
                 expect(filteringVerified).toBeTruthy();
@@ -92,10 +70,10 @@ describe('Allexis search field tests', () => {
         });
     });
 
-    it('Filters Verification - Filter: Product types, SubFilter:Album', () => {
+    it('Filters Verification - Filter: Product types, SubFilter:Album - Test Case 5', () => {
         let filterType = 'Product types';
         let filterSubtype = 'Album';
-        isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
+        ResultsPage.isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeTruthy();
             ResultsPage.verifyFilteringFunctionality(filterType, filterSubtype).then((filteringVerified) => {
                 expect(filteringVerified).toBeTruthy();
@@ -104,12 +82,12 @@ describe('Allexis search field tests', () => {
         });
     });
 
-    it('Multiple Filters Verification - Filter: Product types&Genres, SubFilter:Album&Pop', () => {
+    it('Multiple Filters Verification - Filter: Product types&Genres, SubFilter:Album&Pop - Test Case 6', () => {
         let filterType1 = 'Genres';
         let filterType2 = 'Genres';
         let filterSubtype1 = 'Classical';
         let filterSubtype2 = 'Pop';
-        isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
+        ResultsPage.isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeTruthy();
             ResultsPage.multipleFiltersVerification(filterType1, filterType2, filterSubtype1, filterSubtype2).then((filteringVerified) => {
                 expect(filteringVerified).toBeTruthy();
@@ -119,66 +97,60 @@ describe('Allexis search field tests', () => {
     });
 
 
-    it('Search for non-existing artist. Expect 0 results', () => {
+    it('Search for non-existing artist. Expect 0 results - Test Case 7', () => {
         let artistName = 'gfsgsdgsgfsgfdgsdgsfgsfgsfgsgsfgg';
-        isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
+        ResultsPage.isThereMoreThanZeroResults(artistName).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeFalsy();
         });
     });
 
-    it('Search by existing ISRC. Expect more than 0 results', () => {
+    it('Search by existing ISRC. Expect more than 0 results - Test Case 8', () => {
         let isrc = 'USNRS1434135';
-        isThereMoreThanZeroResults(isrc).then(function (isThereMultipleResults) {
+        ResultsPage.isThereMoreThanZeroResults(isrc).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeTruthy();
         });
     });
 
 
-    it('Search for non-existing ISRC. Expect 0 results', () => {
+    it('Search for non-existing ISRC. Expect 0 results - Test Case 9', () => {
         let isrc = 'USNRS143B135';
-        isThereMoreThanZeroResults(isrc).then(function (isThereMultipleResults) {
+        ResultsPage.isThereMoreThanZeroResults(isrc).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeFalsy();
         });
     });
 
-    it('Search by existing Song. Expect more than 0 results', () => {
+    it('Search by existing Song. Expect more than 0 results - Test Case 10', () => {
         let song = 'White horse';
-        isThereMoreThanZeroResults(song).then(function (isThereMultipleResults) {
+        ResultsPage.isThereMoreThanZeroResults(song).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeTruthy();
         });
     });
 
-    it('Attempt SQL injection', () => {
+    it('Attempt SQL injection - Test Case 11', () => {
         let song = 'or \'1\'=\'1 ';
-        isThereMoreThanZeroResults(song).then(function (isThereMultipleResults) {
+        ResultsPage.isThereMoreThanZeroResults(song).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeTruthy();
         });
     });
 
-    it('Test Short string search,Expect that she search does not execute', () => {
+    it('Test Short string search,Expect that she search does not execute - Test Case 12', () => {
         let shortString = 'a';
-        CurrentPage.getPageTitle().then((initialPageTitle) => {
-            fillSearchFormAndClickSearch(shortString).then(() => {
-                CurrentPage.getPageTitle().then((afterSearchPageTitle) => {
-                })
+        fillSearchFormAndClickSearch(shortString).then(() => {
+            browser.sleep(loadingTimeout).then(() => {
+                expect(element(by.cssContainingText('span','Search results for')).isPresent()).toBe(false);
             })
         })
 
+
     });
 
-    it('Test Chinease Han Characters string search. Expect 0 results', () => {
+    it('Test Chinease Han Characters string search. Expect 0 results - Test Case 13', () => {
         let song = '漢字';
-        isThereMoreThanZeroResults(song).then(function (isThereMultipleResults) {
+        ResultsPage.isThereMoreThanZeroResults(song).then(function (isThereMultipleResults) {
             expect(isThereMultipleResults).toBeFalsy();
         });
     });
 
-    it('Test is there a max number of characters in search string. Expect that the search limits the searched string size', () => {
-        let song = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
-        isThereMoreThanZeroResults(song).then(function (isThereMultipleResults) {
-            expect(isThereMultipleResults).toBeFalsy();
-        });
-    });
 
 
 });
